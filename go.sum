@@ -1,0 +1,6 @@
+github.com/keybase/go-keychain v0.0.0-20181011010623-f1daa725cce4 h1:YB7bZpTYGkkRZrUQ6mtE9Mq0lukJDSWj5XCcd5FO6Uc=
+github.com/keybase/go-keychain v0.0.0-20181011010623-f1daa725cce4/go.mod h1:JJNrCn9otv/2QP4D7SMJBgaleKpOf66PnW6F5WGNRIc=
+github.com/mdp/qrterminal v1.0.1 h1:07+fzVDlPuBlXS8tB0ktTAyf+Lp1j2+2zK3fBOL5b7c=
+github.com/mdp/qrterminal v1.0.1/go.mod h1:Z33WhxQe9B6CdW37HaVqcRKzP+kByF3q/qLxOGe12xQ=
+rsc.io/qr v0.2.0 h1:6vBLea5/NRMVTz8V66gipeLycZMl/+UlFmk8DvqQ6WY=
+rsc.io/qr v0.2.0/go.mod h1:IF+uZjkb9fqyeF/4tlBoynqmQxUoPfWEKh921coOuXs=
