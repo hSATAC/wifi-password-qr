@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/keybase/go-keychain"
-	"github.com/mdp/qrterminal"
 	"os"
 	"os/exec"
 	"regexp"
 	"strings"
+
+	"github.com/keybase/go-keychain"
+	"github.com/mdp/qrterminal"
 )
 
 const airportBin = "/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport"
@@ -24,7 +25,12 @@ func main() {
 	fmt.Printf("\033[90m … getting password for \"%s\". \033[39m\n", ssid)
 	fmt.Println("\033[90m … keychain prompt incoming. \033[39m")
 
-	password := getWifiPassword(ssid)
+	password, err := getWifiPassword(ssid)
+
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "Could not retrieve password. %v", err)
+		os.Exit(1)
+	}
 
 	if password == "" {
 		fmt.Fprintln(os.Stderr, "Could not retrieve password.")
@@ -38,17 +44,23 @@ func main() {
 	displayQRCode(qr)
 }
 
-func getWifiPassword(ssid string) (password string) {
+func getWifiPassword(ssid string) (password string, err error) {
 	query := keychain.NewItem()
 	query.SetSecClass(keychain.SecClassGenericPassword)
 	query.SetDescription("AirPort network password")
 	query.SetAccount(ssid)
 	query.SetMatchLimit(keychain.MatchLimitOne)
 	query.SetReturnData(true)
-	results, _ := keychain.QueryItem(query)
-	password = string(results[0].Data)
+	results, err := keychain.QueryItem(query)
+	if err != nil {
+		return "", err
+	} else if len(results) != 1 {
+		return "", nil
+	} else {
+		password = string(results[0].Data)
+	}
 
-	return password
+	return password, err
 }
 
 func getWifiInfo() (authenticationType string, ssid string) {
