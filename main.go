@@ -28,7 +28,7 @@ func main() {
 	password, err := getWifiPassword(ssid)
 
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "Could not retrieve password. %v", err)
+		fmt.Fprintf(os.Stderr, "Could not retrieve password. %v\n", err)
 		os.Exit(1)
 	}
 
