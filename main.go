@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -14,9 +15,7 @@ import (
 const airportBin = "/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport"
 
 func main() {
-
 	auth, ssid := getWifiInfo()
-
 	if ssid == "" {
 		fmt.Fprintln(os.Stderr, "Could not retrieve SSID.")
 		os.Exit(1)
@@ -26,21 +25,14 @@ func main() {
 	fmt.Println("\033[90m … keychain prompt incoming. \033[39m")
 
 	password, err := getWifiPassword(ssid)
-
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Could not retrieve password. %v\n", err)
-		os.Exit(1)
-	}
-
-	if password == "" {
-		fmt.Fprintln(os.Stderr, "Could not retrieve password.")
 		os.Exit(1)
 	}
 
 	fmt.Printf("\033[96m ✓ \"%s\" \033[39m\n\n", password)
 
 	qr := composeWifiString(auth, ssid, password)
-
 	displayQRCode(qr)
 }
 
@@ -54,13 +46,12 @@ func getWifiPassword(ssid string) (password string, err error) {
 	results, err := keychain.QueryItem(query)
 	if err != nil {
 		return "", err
-	} else if len(results) != 1 {
-		return "", nil
-	} else {
-		password = string(results[0].Data)
+	}
+	if len(results) != 1 {
+		return "", errors.New("keychain has no password")
 	}
 
-	return password, err
+	return string(results[0].Data), err
 }
 
 func getWifiInfo() (authenticationType string, ssid string) {
